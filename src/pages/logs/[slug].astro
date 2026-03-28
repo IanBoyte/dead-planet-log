@@ -10,6 +10,7 @@ export async function getStaticPaths() {
   }));
 }
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
@@ -28,7 +29,7 @@ const next = logs[idx + 1];
 ---
 <TerminalLayout title={`LOG ${entry.data.entry} // MATRON'S CALL`}>
 
-  <a href={import.meta.env.BASE_URL} class="back-link">Ship's Log Index</a>
+  <a href={`${base}/`} class="back-link">Ship's Log Index</a>
 
   <hr class="div" />
   <div class="entry-eyebrow">MCS Matron's Call // Ship Log // Entry {entry.data.entry}</div>
@@ -65,11 +66,11 @@ const next = logs[idx + 1];
 
   <div class="entry-nav">
     {prev
-      ? <a href={`${import.meta.env.BASE_URL}logs/${prev.id.replace(/\.md$/, '')}`} class="nav-link">&lt; Entry {prev.data.entry}</a>
+      ? <a href={`${base}/logs/${prev.id.replace(/\.md$/, '')}`} class="nav-link">&lt; Entry {prev.data.entry}</a>
       : <span />
     }
     {next
-      ? <a href={`${import.meta.env.BASE_URL}logs/${next.id.replace(/\.md$/, '')}`} class="nav-link">Entry {next.data.entry} &gt;</a>
+      ? <a href={`${base}/logs/${next.id.replace(/\.md$/, '')}`} class="nav-link">Entry {next.data.entry} &gt;</a>
       : <span />
     }
   </div>

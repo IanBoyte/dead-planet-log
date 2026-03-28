@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import TerminalLayout from '../layouts/TerminalLayout.astro';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const logs = await getCollection('logs');
 logs.sort((a, b) => parseInt(a.data.entry) - parseInt(b.data.entry));
 
@@ -70,7 +71,7 @@ const badge: Record<string, string> = {
     {logs.map((log) => {
       const slug = log.id.replace(/\.md$/, '');
       return (
-        <a href={`${import.meta.env.BASE_URL}logs/${slug}`} class="log-row">
+        <a href={`${base}/logs/${slug}`} class="log-row">
           <span class="lr-num">[{log.data.entry}]</span>
           <span class="lr-date">{log.data.stardate}</span>
           <span class={`lr-status ${log.data.status}`}>{badge[log.data.status]}</span>
@@ -78,7 +79,7 @@ const badge: Record<string, string> = {
         </a>
       );
     })}
-    <a href={`${import.meta.env.BASE_URL}crew`} class="log-row log-row-crew">
+    <a href={`${base}/crew`} class="log-row log-row-crew">
       <span class="lr-num">[C]</span>
       <span class="lr-date"></span>
       <span class="lr-status lr-status-manifest">[MANIFEST ]</span>
