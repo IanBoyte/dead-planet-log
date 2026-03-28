@@ -1,0 +1,70 @@
+---
+import TerminalLayout from '../layouts/TerminalLayout.astro';
+import { crew } from '../data/crew';
+
+const activeCount   = crew.filter(m => m.status === 'ACTIVE').length;
+const deceasedCount = crew.filter(m => m.status === 'DECEASED').length;
+const refugeeCount  = crew.filter(m => m.tags?.includes('REFUGEE')).length;
+const androidCount  = crew.filter(m => m.tags?.includes('ANDROID')).length;
+
+const statusBadge: Record<string, string> = {
+  ACTIVE:   '[ACTIVE  ]',
+  DECEASED: '[DECEASED]',
+};
+---
+<TerminalLayout title="CREW MANIFEST // MATRON'S CALL">
+
+  <a href="/" class="back-link">Ship's Log Index</a>
+
+  <hr class="div" />
+  <div class="entry-eyebrow">MCS Matron's Call // Personnel File // Registry 7744-MC</div>
+  <hr class="div" />
+
+  <div class="entry-title">CREW MANIFEST</div>
+
+  <table class="kv">
+    <tr>
+      <td class="k">Total Personnel</td>
+      <td class="v">{crew.length}</td>
+    </tr>
+    <tr>
+      <td class="k">Active</td>
+      <td class="v">{activeCount}</td>
+    </tr>
+    <tr>
+      <td class="k">Deceased</td>
+      <td class={`v ${deceasedCount > 0 ? 'crit' : ''}`}>{deceasedCount}</td>
+    </tr>
+    <tr>
+      <td class="k">Refugees (aboard)</td>
+      <td class="v">{refugeeCount}</td>
+    </tr>
+    <tr>
+      <td class="k">Non-human Personnel</td>
+      <td class="v">{androidCount}</td>
+    </tr>
+  </table>
+
+  <hr class="div" />
+
+  <div class="crew-list">
+    {crew.map((member) => (
+      <div class={`crew-row status-${member.status}`}>
+        <span class="cr-num">[{member.id}]</span>
+        <span class="cr-name">{member.name}</span>
+        <span class="cr-role">{member.role}</span>
+        <span class={`cr-status cr-${member.status}`}>{statusBadge[member.status]}</span>
+        {member.tags?.map(tag => (
+          <span class={`cr-tag cr-tag-${tag}`}>{tag}</span>
+        ))}
+      </div>
+    ))}
+  </div>
+
+  <hr class="div" />
+
+  <div class="prompt crew-summary">
+    {crew.length} personnel on file  //  {activeCount} active  //  {deceasedCount} deceased  //  {refugeeCount} refugee(s)  //  {androidCount} android
+  </div>
+
+</TerminalLayout>

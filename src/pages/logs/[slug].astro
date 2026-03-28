@@ -1,0 +1,77 @@
+---
+import { getCollection, render } from 'astro:content';
+import TerminalLayout from '../../layouts/TerminalLayout.astro';
+
+export async function getStaticPaths() {
+  const logs = await getCollection('logs');
+  return logs.map((entry) => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const statusClass = {
+  NOMINAL:  '',
+  CAUTION:  'warn',
+  WARNING:  'warn',
+  CRITICAL: 'crit',
+}[entry.data.status] ?? '';
+
+const logs = await getCollection('logs');
+logs.sort((a, b) => parseInt(a.data.entry) - parseInt(b.data.entry));
+const idx = logs.findIndex(l => l.id === entry.id);
+const prev = logs[idx - 1];
+const next = logs[idx + 1];
+---
+<TerminalLayout title={`LOG ${entry.data.entry} // MATRON'S CALL`}>
+
+  <a href="/" class="back-link">Ship's Log Index</a>
+
+  <hr class="div" />
+  <div class="entry-eyebrow">MCS Matron's Call // Ship Log // Entry {entry.data.entry}</div>
+  <hr class="div" />
+
+  <div class="entry-title">{entry.data.title}</div>
+
+  <table class="kv">
+    <tr>
+      <td class="k">Stardate</td>
+      <td class="v">{entry.data.stardate}</td>
+    </tr>
+    <tr>
+      <td class="k">Author</td>
+      <td class="v">{entry.data.author}</td>
+    </tr>
+    <tr>
+      <td class="k">Status</td>
+      <td class={`v ${statusClass}`}>{entry.data.status}</td>
+    </tr>
+    {entry.data.tags && (
+      <tr>
+        <td class="k">Tags</td>
+        <td class="v" style="color: var(--p-dim)">{entry.data.tags.join(' / ')}</td>
+      </tr>
+    )}
+  </table>
+
+  <article class="log-body">
+    <Content />
+  </article>
+
+  <hr class="div" />
+
+  <div class="entry-nav">
+    {prev
+      ? <a href={`/logs/${prev.id.replace(/\.md$/, '')}`} class="nav-link">&lt; Entry {prev.data.entry}</a>
+      : <span />
+    }
+    {next
+      ? <a href={`/logs/${next.id.replace(/\.md$/, '')}`} class="nav-link">Entry {next.data.entry} &gt;</a>
+      : <span />
+    }
+  </div>
+
+</TerminalLayout>

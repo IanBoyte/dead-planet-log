@@ -1,0 +1,137 @@
+---
+import '../styles/terminal.css';
+
+interface Props {
+  title?: string;
+}
+const { title = "MATRON'S CALL // SHIP LOG TERMINAL" } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="terminal">
+    <slot />
+    <footer class="terminal-footer">
+      <span>MCS MATRON'S CALL // REG-7744-MC // CLASS: MEDIUM FREIGHTER</span>
+      <span>TERMINAL ACCESS: AUTHORIZED</span>
+    </footer>
+  </div>
+  <script>
+    (async () => {
+      const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
+      async function typeEl(el: HTMLElement | null, ms: number) {
+        if (!el) return;
+        const text = el.textContent ?? '';
+        el.textContent = '';
+        el.style.visibility = 'visible';
+        for (const ch of text) {
+          el.textContent += ch;
+          await sleep(ms);
+        }
+      }
+
+      async function revealEach(list: NodeListOf<HTMLElement> | HTMLElement[], gap: number) {
+        for (const el of list) {
+          (el as HTMLElement).style.visibility = 'visible';
+          await sleep(gap);
+        }
+      }
+
+      // ── INDEX PAGE ──────────────────────────────────────────────
+      const shipName = document.querySelector<HTMLElement>('.ship-name');
+      if (shipName) {
+        const hide = (sel: string) =>
+          document.querySelectorAll<HTMLElement>(sel)
+            .forEach(el => el.style.visibility = 'hidden');
+
+        hide('.ship-name');
+        hide('.ship-sub');
+        hide('.kv tr');
+        hide('.prompt');
+        hide('.log-row');
+        hide('#input-prompt');
+
+        await typeEl(document.querySelector('.ship-name'), 35);
+        await typeEl(document.querySelector('.ship-sub'), 10);
+        await sleep(80);
+        await revealEach(document.querySelectorAll<HTMLElement>('.kv tr'), 50);
+        await sleep(80);
+        for (const p of document.querySelectorAll<HTMLElement>('.prompt')) {
+          await typeEl(p, 10);
+          await sleep(25);
+        }
+        await sleep(50);
+        await revealEach(document.querySelectorAll<HTMLElement>('.log-row'), 45);
+        await sleep(80);
+        const inputPrompt = document.querySelector<HTMLElement>('#input-prompt');
+        if (inputPrompt) inputPrompt.style.visibility = 'visible';
+        document.querySelector<HTMLInputElement>('#entry-input')?.focus();
+      }
+
+      // ── LOG ENTRY PAGE ──────────────────────────────────────────
+      // Detect by .log-body (only present on individual log entry pages)
+      const logBody = document.querySelector('.log-body');
+      if (logBody) {
+        const backLink  = document.querySelector<HTMLElement>('.back-link');
+        const eyebrow   = document.querySelector<HTMLElement>('.entry-eyebrow');
+        const entryTitle = document.querySelector<HTMLElement>('.entry-title');
+        const bodyKids  = Array.from(logBody.children) as HTMLElement[];
+        const entryNav  = document.querySelector<HTMLElement>('.entry-nav');
+
+        [backLink, eyebrow, entryTitle, entryNav]
+          .forEach(el => el && (el.style.visibility = 'hidden'));
+        document.querySelectorAll<HTMLElement>('.kv tr')
+          .forEach(el => el.style.visibility = 'hidden');
+        bodyKids.forEach(el => el.style.visibility = 'hidden');
+
+        if (backLink) backLink.style.visibility = 'visible';
+        await sleep(80);
+        await typeEl(eyebrow, 10);
+        await typeEl(entryTitle, 28);
+        await sleep(80);
+        await revealEach(document.querySelectorAll<HTMLElement>('.kv tr'), 50);
+        await sleep(80);
+        await revealEach(bodyKids, 65);
+        await sleep(100);
+        if (entryNav) entryNav.style.visibility = 'visible';
+      }
+
+      // ── CREW MANIFEST PAGE ──────────────────────────────────────
+      const crewList = document.querySelector('.crew-list');
+      if (crewList) {
+        const backLink   = document.querySelector<HTMLElement>('.back-link');
+        const eyebrow    = document.querySelector<HTMLElement>('.entry-eyebrow');
+        const title      = document.querySelector<HTMLElement>('.entry-title');
+        const crewRows   = document.querySelectorAll<HTMLElement>('.crew-row');
+        const summary    = document.querySelector<HTMLElement>('.crew-summary');
+
+        [backLink, eyebrow, title, summary]
+          .forEach(el => el && (el.style.visibility = 'hidden'));
+        document.querySelectorAll<HTMLElement>('.kv tr')
+          .forEach(el => el.style.visibility = 'hidden');
+        crewRows.forEach(el => el.style.visibility = 'hidden');
+
+        if (backLink) backLink.style.visibility = 'visible';
+        await sleep(80);
+        await typeEl(eyebrow, 10);
+        await typeEl(title, 28);
+        await sleep(80);
+        await revealEach(document.querySelectorAll<HTMLElement>('.kv tr'), 50);
+        await sleep(80);
+        await revealEach(crewRows, 50);
+        await sleep(80);
+        if (summary) summary.style.visibility = 'visible';
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# build output
+dist/
+.output/
+
+# dependencies
+node_modules/
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# Astro cache
+.astro/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
