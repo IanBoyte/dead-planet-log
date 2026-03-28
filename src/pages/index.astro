@@ -70,7 +70,7 @@ const badge: Record<string, string> = {
     {logs.map((log) => {
       const slug = log.id.replace(/\.md$/, '');
       return (
-        <a href={`/logs/${slug}`} class="log-row">
+        <a href={`${import.meta.env.BASE_URL}logs/${slug}`} class="log-row">
           <span class="lr-num">[{log.data.entry}]</span>
           <span class="lr-date">{log.data.stardate}</span>
           <span class={`lr-status ${log.data.status}`}>{badge[log.data.status]}</span>
@@ -78,7 +78,7 @@ const badge: Record<string, string> = {
         </a>
       );
     })}
-    <a href="/crew" class="log-row log-row-crew">
+    <a href={`${import.meta.env.BASE_URL}crew`} class="log-row log-row-crew">
       <span class="lr-num">[C]</span>
       <span class="lr-date"></span>
       <span class="lr-status lr-status-manifest">[MANIFEST ]</span>
